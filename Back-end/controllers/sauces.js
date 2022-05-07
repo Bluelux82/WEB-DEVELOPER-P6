@@ -4,9 +4,9 @@ const fs = require('fs');
 // Create new sauce
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce) // Renvoie un objet 
-    delete sauceObject._id; // Supprime le _id de la sauce
+    delete sauceObject._id; // Supprime le _id généré par le front de la sauce
     const sauce = new Sauce({ // Crée une nouvelle sauce à partir du Schema
-        ...sauceObject,
+        ...sauceObject, // L'opérateur spread prend l'intégralité des éléments dans le corp de la requête
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // Récupére l'image à afficher depuis le fichier images à l'aide de la requête.
         likes: 0, // Initialise le nombre de likes à 0
         dislikes: 0, // Initialise le nombre de dislikes à 0
@@ -20,12 +20,13 @@ exports.createSauce = (req, res, next) => {
 
 // Modify sauce
 exports.modifySauce = (req, res, next) => {
-    const sauceObject = req.file ?
+    const sauceObject = req.file ? // Si req.file existe
         {
             ...JSON.parse(req.body.sauce),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body };
-        if (req.file) {  // 
+            
+        } : { ...req.body }; // Je copie simplement req.body
+        if (req.file) {  //
             Sauce.findOne({ _id: req.params.id }) // // Trouve un objet correspondant à l'id de la requête
             .then(sauce => {
                 const filename = sauce.imageUrl.split('/images/')[1]; // retourne un tableau de deux éléments le deuxième étant le nom du fichier.
@@ -34,8 +35,8 @@ exports.modifySauce = (req, res, next) => {
             })
             // message d'erreur si la récupération de la sauce n'a pu être faite
             .catch(error => res.status(500).json({ error }));
-        }   
-    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) // Mets à jour l'objet correspondant à l'id de la requête
+        }
+    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) // Mets à jour l'objet correspondant à l'id dans les parametre de la requête
         .then(() => res.status(200).json({ message: 'Objet modifié !' }))
         .catch(error => res.status(400).json({ error }));
 };

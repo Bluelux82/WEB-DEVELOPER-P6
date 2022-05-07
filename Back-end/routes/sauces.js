@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
-// Import model Sauce 
 const sauceCtrl = require('../controllers/sauces')
 const auth = require('../middleware/auth'); // J'importe le middleware auth
 const multer = require('../middleware/multer-config'); // J'importe le middleware multer

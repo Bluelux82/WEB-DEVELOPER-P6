@@ -30,9 +30,9 @@ exports.login = (req, res, next) => { // CONNEXION D'UN UTILISATEUR
                     if (!valid) { // Si la comparaison n'est pas bonne je renvoie une erreur ('mauvais mdp")
                         return res.status(401).json({ error: 'Mots de passe incorrect !' });
                     }
-                    res.status(200).json({ // Si la comparaison est bonne je renvoie un status 200
-                        userId: user._id, // je renvoie aussi le userId
-                        token: jwt.sign( // j'appelle la fonction sign de jwt
+                    res.status(200).json({ // Si la comparaison est bonne je renvoie un status 200 et un objet json qui contiendra
+                        userId: user._id, // Un userId contenant l'id de l'utilisateur
+                        token: jwt.sign( // Et un token dans lequel j'appelle la fonction sign de jwt
                             { userId: user._id }, // Objet contenant le user._id
                             'RANDOM_TOKEN_SECRET', // Clé secrete d'encodage
                             { expiresIn: '24h' } // durée avant expiration du token
